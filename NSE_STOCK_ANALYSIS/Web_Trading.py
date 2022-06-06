@@ -2,38 +2,23 @@ import pandas as pd
 from nsetools import Nse
 from pprint import pprint  # just for neatness of display
 
-nse= Nse()
-print(nse)
-q= nse.get_quote('MindTree')
-# it's ok to use both upper or lower case for codes.
-q1 = nse.get_quote('persistent')
-q2= nse.get_quote('Cipla')
-q3= nse.get_quote('Titan')
-q4= nse.get_quote('Sunpharma')
-q5= nse.get_quote('HDFC')
-pprint(q)
-keys =['dayLow', 'dayHigh', 'open']
-MindTree = list( map(q.get, keys) )
-Persistent=list(map(q1.get,keys))
-Cipla = list( map(q2.get, keys) )
-Titan=list(map(q3.get,keys))
-sunpharma = list( map(q4.get, keys) )
-Hdfc=list(map(q5.get,keys))
-df_info=pd.DataFrame()
-df_info['MindTree']=MindTree
-df_info['Persistent']=Persistent
-df_info['Cipla']=Cipla
-df_info['Titan']=Titan
-df_info['Sunpharma']=sunpharma
-df_info['Hdfc']=Hdfc
-df_info.rename(index={0:'dayLow',1:'dayHigh',2:'Open'}, inplace=True)
-df_info=df_info.T
-"""""
-df_info['open']=q['open']
-df_info['dayHigh']=q['dayHigh']
-df_info['dayLow']=q['dayLow']
-df_info['close']= q['closePrice']
-"""
+def day_high_low_open(symbols):
+    nse= Nse()
+    q=[]
+    keys =['dayLow', 'dayHigh', 'open']
+    for i in symbols:
+        q.append(nse.get_quote(i))
+    
+    day_H_L_O=[]
+    for i in range(0,len(q)):
+        day_H_L_O.append(list(map(q[i].get,keys)))
+        
+    df_info=pd.DataFrame(day_H_L_O,index=symbols,columns=keys)
+    return(df_info)
+  
+symbols=["MindTree","persistent","Cipla","Titan","Sunpharma","HDFC"]
+df_info=day_high_low_open(symbols)
+df_info
 
 
 nse.is_valid_code('infy') # this should return True True
